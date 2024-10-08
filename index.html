@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flashcard Study Website</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #e7f3fe; /* Default light mode background */
+        color: #333;
+        padding: 40px; /* Increased padding */
+        text-align: center;
+        transition: background-color 0.3s, color 0.3s; /* Smooth transition for color changes */
+      }
+      h1 {
+        font-family: "Montserrat", sans-serif;
+        color: #0056b3; /* Deeper blue for headers */
+        margin-bottom: 20px;
+      }
+      #flashcard-container {
+        margin: 40px auto; /* Increased margin */
+        padding: 30px; /* Increased padding */
+        border: 2px solid #007bff; /* Bright blue border */
+        background-color: #ffffff; /* White background for clarity */
+        border-radius: 10px;
+        width: 480px; /* Wider flashcard container */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+      #flashcard-container:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+      }
+      .flashcard {
+        font-size: 28px; /* Larger font size for readability */
+        margin: 20px 0;
+        padding: 40px; /* Increased padding for cards */
+        border: 1px solid #007bff; /* Bright blue border */
+        border-radius: 8px;
+        transition: transform 0.2s;
+        width: 100%; /* Full width of container */
+        background-color: #f0f8ff; /* Light blue background for regular flashcards */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column; /* Center content vertically */
+      }
+      .flashcard.math {
+        background-color: #fff3cd; /* Soft yellow for math flashcards */
+        border-color: #856404; /* Darker border for math flashcards */
+      }
+      .flashcard:hover {
+        transform: scale(1.05); /* Slight enlargement on hover */
+      }
+      button {
+        padding: 15px 20px; /* Larger button padding */
+        border: none;
+        background-color: #28a745; /* Green for positivity */
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 18px; /* Larger button text */
+        transition: background-color 0.3s;
+        margin: 10px; /* Uniform margin for buttons */
+      }
+      button:hover {
+        background-color: #218838; /* Darker green on hover */
+      }
+      input[type="file"],
+      input[type="text"] {
+        margin: 10px 0;
+        padding: 10px;
+        width: 80%; /* Wider input fields */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      #toggle-color-mode {
+        background-color: #007bff; /* Blue for color mode button */
+      }
+      #toggle-color-mode:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Flashcard Study Website</h1>
+
+    <div>
+      <button id="toggle-flashcard-type">Switch to Math Flashcards</button>
+      <button id="toggle-color-mode">Switch to Dark Mode</button>
+      <!-- Button to toggle color mode -->
+    </div>
+
+    <div id="flashcard-container">
+      <div class="flashcard" id="flashcard">Welcome to Flashcards!</div>
+      <div id="flashcard-answer" style="display: none"></div>
+      <!-- Hidden answer div -->
+      <button id="flip-button">Flip Card</button>
+      <!-- Flip button -->
+      <button id="next-button">Next</button>
+      <br />
+      <input
+        type="text"
+        id="flashcard-question"
+        placeholder="Enter your question here"
+      />
+      <input
+        type="text"
+        id="flashcard-answer-input"
+        placeholder="Enter your answer here"
+      />
+      <button id="add-flashcard-button">Add Flashcard</button>
+      <!-- Button to add flashcard -->
+      <br />
+      <input type="file" id="file-input" />
+      <button id="load-button">Load Flashcards</button>
+      <button id="save-button">Save Flashcards</button>
+    </div>
+
+    <script>
+      const flashcards = {
+        regular: [
+          {
+            question: "This card is for text, type your question here",
+            answer: "The answer will appear here",
+          },
+        ],
+        math: [
+          {
+            question:
+              "This card is for math, type your number or equations here",
+            answer: "The answer will appear here",
+          },
+        ],
+      };
+      let currentFlashcardIndex = 0;
+      let currentType = "regular"; // Default to regular flashcards
+      let isFlipped = false; // Track if card is flipped
+      let isDarkMode = false; // Track the current mode
+
+      function displayFlashcard() {
+        const flashcardElement = document.getElementById("flashcard");
+        const currentFlashcard = flashcards[currentType][currentFlashcardIndex];
+        flashcardElement.innerHTML = isFlipped
+          ? currentFlashcard.answer
+          : currentFlashcard.question; // Show question or answer
+        flashcardElement.className =
+          currentType === "math" ? "flashcard math" : "flashcard"; // Add class for styling
+        MathJax.typeset(); // Update MathJax
+      }
+
+      document.getElementById("next-button").addEventListener("click", () => {
+        isFlipped = false; // Reset flip state on next
+        currentFlashcardIndex =
+          (currentFlashcardIndex + 1) % flashcards[currentType].length;
+        displayFlashcard();
+      });
+
+      document.getElementById("flip-button").addEventListener("click", () => {
+        isFlipped = !isFlipped; // Toggle flip state
+        displayFlashcard();
+      });
+
+      document
+        .getElementById("toggle-flashcard-type")
+        .addEventListener("click", () => {
+          currentType = currentType === "regular" ? "math" : "regular";
+          document.getElementById("toggle-flashcard-type").innerText =
+            currentType === "regular"
+              ? "Switch to Math Flashcards"
+              : "Switch to Regular Flashcards";
+          currentFlashcardIndex = 0; // Reset index
+          isFlipped = false; // Reset flip state
+          displayFlashcard();
+        });
+
+      document
+        .getElementById("toggle-color-mode")
+        .addEventListener("click", () => {
+          isDarkMode = !isDarkMode; // Toggle dark mode
+          document.body.style.backgroundColor = isDarkMode ? "#333" : "#e7f3fe"; // Dark mode background
+          document.body.style.color = isDarkMode ? "#e7f3fe" : "#333"; // Light mode text color
+          const flashcardContainer = document.getElementById(
+            "flashcard-container"
+          );
+          flashcardContainer.style.backgroundColor = isDarkMode
+            ? "#444"
+            : "#ffffff"; // Flashcard container background
+          flashcardContainer.style.borderColor = isDarkMode
+            ? "#555"
+            : "#007BFF"; // Border color
+          const flashcardsElements = document.querySelectorAll(".flashcard");
+          flashcardsElements.forEach((card) => {
+            card.style.backgroundColor = isDarkMode
+              ? "#555"
+              : card.classList.contains("math")
+              ? "#fff3cd"
+              : "#f0f8ff";
+            card.style.color = isDarkMode ? "#e7f3fe" : "#333"; // Flashcard text color
+          });
+          const buttons = document.querySelectorAll("button");
+          buttons.forEach((button) => {
+            button.style.backgroundColor = isDarkMode ? "#28a745" : "#28a745";
+            button.style.color = isDarkMode ? "#fff" : "#fff"; // Button text color
+          });
+        });
+
+      document
+        .getElementById("add-flashcard-button")
+        .addEventListener("click", () => {
+          const question = document.getElementById("flashcard-question").value;
+
+          const answer = document.getElementById(
+            "flashcard-answer-input"
+          ).value;
+          if (question && answer) {
+            flashcards[currentType].push({ question, answer });
+            document.getElementById("flashcard-question").value = "";
+            document.getElementById("flashcard-answer-input").value = "";
+            alert("Flashcard added!");
+          } else {
+            alert("Please enter both a question and an answer.");
+          }
+        });
+
+      document.getElementById("save-button").addEventListener("click", () => {
+        const dataStr = JSON.stringify(flashcards);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "flashcards.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      });
+
+      document.getElementById("load-button").addEventListener("click", () => {
+        const fileInput = document.getElementById("file-input");
+        const file = fileInput.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const loadedFlashcards = JSON.parse(event.target.result);
+            Object.keys(loadedFlashcards).forEach((key) => {
+              flashcards[key] = loadedFlashcards[key];
+            });
+            alert("Flashcards loaded successfully!");
+          };
+          reader.readAsText(file);
+        } else {
+          alert("Please select a file to load.");
+        }
+      });
+
+      // Initialize the display
+      displayFlashcard();
+    </script>
+  </body>
+</html>
