@@ -2,7 +2,14 @@ This is a basic bare bones of a flashcard website.
 
 Since a lot of websites were asking for money, I decided to make one. 
 
-Please see that, the files will be saved as json file.
+Here is how to use it:
+
+Step 1: Type in all the questions and answers one by one and add it one by one.
+Step 2: Once you are done with the Q&A then save the file, you can rename it after you have downloaded it.
+Step 3: Open and select the file that you have saved, load the file on the website.
+Step 4: Click next and the questions and answers will be there, click flip to reveal the answer.
+
+Please see that, the files will be saved as json file, therefore this website is only suitable to use on a computer as it might not support mobile.
 
 Note: Once you are done with making flashcards and done with the study session please save the file on your personal computer and if you want to revise it then, you can load the file from your computer and have a revision session.
 
