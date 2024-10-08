@@ -1,0 +1,11 @@
+This is a basic bare bones of a flashcard website.
+
+Since a lot of websites were asking for money, I decided to make one. 
+
+Please see that, the files will be saved as json file.
+
+Note: Once you are done with making flashcards and done with the study session please save the file on your personal computer and if you want to revise it then, you can load the file from your computer and have a revision session.
+
+Thank you :) 
+
+Happy learning 
